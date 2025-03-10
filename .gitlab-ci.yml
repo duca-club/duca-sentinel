@@ -1,0 +1,10 @@
+image: node:alpine
+
+stages:
+    - build
+
+run-bot:
+    stage: build
+    script:
+        - npm install
+        - node ./src/index.js
