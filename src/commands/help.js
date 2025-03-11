@@ -1,5 +1,5 @@
 export const data = {
-	name: 'commands',
+	name: 'help',
 	description: 'Display a list of all available commands',
 };
 
@@ -9,15 +9,16 @@ export async function run({ interaction, client }) {
 
 		const reply = {
 			color: 0x00aeef,
-			title: 'Commands',
+			title: 'Help',
 			thumbnail: {
 				url: client.user.avatarURL(),
 			},
 			description:
-				"Please note DUCA Sentinel is still in early development and as such, these commands may not reflect Obfusc8's full functionality.",
+				"Please note DUCA Sentinel is still in early development and as such, these commands may not reflect DUCA Sentinel's full functionality.",
 			fields: [
-				{ name: 'Utility', value: '` commands ` ` ping ` ` verify `' },
+				{ name: 'Utility', value: '` ping ` ` verify `' },
 				{ name: 'Fun', value: '` 8ball ` `cat ` ` flip `' },
+				{ name: 'Miscellaneous', value: '` help ` ' },
 			],
 		};
 
