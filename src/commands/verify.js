@@ -137,7 +137,7 @@ export async function run({ interaction, client }) {
 			interaction,
 			createSuccessEmbed(
 				'Verification Successful',
-				`**You have been granted the ${role} role!** Please check out <#1347014155458056263> for the latest updates/events and <#1347013881876320266> to access all member content.`
+				`**You have been granted the ${role} role!** Please check out <#1347067213160644659> for the latest updates/events and <#1344439191110422588> to access all member content.`
 			)
 		);
 	} catch (error) {
