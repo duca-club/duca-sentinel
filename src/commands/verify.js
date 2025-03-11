@@ -156,7 +156,7 @@ async function refreshCacheIfNeeded(supabase) {
 	if (shouldRefreshCache()) {
 		try {
 			const { data: fileData, error: fileError } = await supabase.storage
-				.from('membership_file')
+				.from('membership_files')
 				.download('members_list.xlsx');
 
 			if (fileError)
