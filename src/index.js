@@ -25,4 +25,15 @@ new CommandKit({
 	bulkRegister: true,
 });
 
+// Checking all messages to see if they start with "!duca member" the old verification method
+client.on('messageCreate', message => {
+	// Ignore messages from bots
+	if (message.author.bot) return;
+
+	// Check if the message starts with "!DUCA member"
+	if (message.content.toLowerCase().startsWith('!duca member')) {
+		message.reply("We've moved to the `/verify` command! Please use that instead.");
+	}
+});
+
 client.login(process.env.TOKEN);
