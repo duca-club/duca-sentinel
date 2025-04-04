@@ -15,20 +15,32 @@ export async function run({ interaction, client }) {
 			},
 			description:
 				"Please note DUCA Sentinel is still in early development and as such, these commands may not reflect DUCA Sentinel's full functionality.",
-			fields: [
-				{ 
-					name: 'Utility', 
-					value: '`ping` - Check if the bot is responsive.\nExample: `/ping`\n\n`verify` - Start the verification process.\nExample: `/verify s223932052@deakin.edu.au`' 
-				},
-				{ 
-					name: 'Fun', 
-					value: '`8ball` - Ask the magic 8-ball a question.\nExample: `/8ball Will I pass my exam?`\n\n`cat` - Get a random cat picture.\nExample: `/cat`\n\n`flip` - Flip a coin.\nExample: `/flip`' 
-				},
-				{ 
-					name: 'Miscellaneous', 
-					value: '`help` - Show this help message.\nExample: `/help`' 
-				}
-			],
+				fields: [
+					{ 
+						name: 'Utility', 
+						value: 
+							'• `ping` - Check if the bot is responsive.\n' +
+							'  Example: `/ping`\n\n' +
+							'• `verify` - Start the verification process by entering the email you used to sign up to the club with.\n' +
+							'  Example: `/verify s223932052@deakin.edu.au`\n\u200b' // invisible char for extra spacing
+					},
+					{ 
+						name: 'Fun', 
+						value: 
+							'• `8ball` - Ask the magic 8-ball a question.\n' +
+							'  Example: `/8ball Will I pass my exam?`\n\n' +
+							'• `cat` - Get a random cat picture.\n' +
+							'  Example: `/cat`\n\n' +
+							'• `flip` - Flip a coin.\n' +
+							'  Example: `/flip`\n\u200b'
+					},
+					{ 
+						name: 'Miscellaneous', 
+						value: 
+							'• `help` - Show this help message.\n' +
+							'  Example: `/help`'
+					}
+				],
 		};
 
 		await interaction.editReply({ embeds: [reply] });
