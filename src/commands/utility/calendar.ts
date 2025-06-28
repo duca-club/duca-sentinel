@@ -9,7 +9,7 @@ import logger from "../../utils/logger.js";
  */
 export const data: CommandData = {
     name: "calendar",
-    description: "Display the list of upcoming DUCA events",
+    description: "Display a list of upcoming DUCA events",
     options: [
         {
             name: "category",
@@ -83,7 +83,7 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
 
             return {
                 name: `${event.title}`,
-                value: `<:tag:1366724226307981322> ${event.category} <:pin:1365898995230314556> ${event.location} <:clock:1366718523916681298> <t:${timestamp}:f>`,
+                value: `<:tag:1388383526289670184> ${event.category} <:pin:1388383493318508727> ${event.location} <:clock:1388383448024223794> <t:${timestamp}:f>`,
             };
         });
 

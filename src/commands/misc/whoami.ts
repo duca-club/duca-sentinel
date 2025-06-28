@@ -61,19 +61,19 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
 
         // — Create action buttons for external links
         const joinButton = new ButtonKit()
-            .setEmoji({ id: "1364096341310963752" })
+            .setEmoji({ id: "1388383460044832850" })
             .setLabel("Join DUCA")
             .setStyle(ButtonStyle.Link)
             .setURL("https://www.dusa.org.au/clubs/deakin-university-cybersecurity-association-burwood-duca");
 
         const linktreeButton = new ButtonKit()
-            .setEmoji({ id: "1381954875486896199" })
+            .setEmoji({ id: "1388383479737225228" })
             .setLabel("DUCA Socials")
             .setStyle(ButtonStyle.Link)
             .setURL("https://linktr.ee/ducaclub");
 
         const githubButton = new ButtonKit()
-            .setEmoji({ id: "1380349446084362443" })
+            .setEmoji({ id: "1388383469712965764" })
             .setLabel("View on GitHub")
             .setStyle(ButtonStyle.Link)
             .setURL("https://github.com/duca-club/duca-sentinel");

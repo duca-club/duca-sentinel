@@ -31,13 +31,13 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         const embed = new EmbedBuilder()
             .setTitle("$ man duca-sentinel")
             .setDescription(
-                "**DUCA Sentinel Commands Manual**\n Listed below is the complete list of all operational slash commands for DUCA Sentinel seperated by category",
+                "**DUCA Sentinel Commands Manual**\n Below is a complete list of all slash commands for DUCA Sentinel seperated by category:",
             )
             .addFields(
                 // Entertainment
                 { name: "/usr/bin/lol", value: "`8ball` `cat` `flip`" },
                 // Utility
-                { name: "/core/utils", value: "`ping` `verify`" },
+                { name: "/core/utils", value: "`calendar` `ping` `verify`" },
                 // Misc
                 { name: "/etc/extra", value: "`man` `whoami`" },
             )
