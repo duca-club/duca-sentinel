@@ -1,6 +1,6 @@
 # DUCA Sentinel
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.1.0-blue.svg?style=for-the-badge)
 ![NodeJS](https://img.shields.io/badge/NodeJS-v22%2B-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white&logoSize=auto)
 ![Prettier](https://img.shields.io/badge/Prettier-%23F7B93E?style=for-the-badge&logo=prettier&logoColor=black&logoSize=auto)
 
@@ -74,8 +74,13 @@ duca-sentinel/
     | `GUILD_ID` | Discord server ID | ✅ |
     | `DEV_ROLE_ID` | Developer role ID for dev commands | ✅ |
     | `MEMBER_ROLE_ID` | Member role ID (for verification) | ✅ |
-    | `SUPABASE_URL` | Supabase project URL | ✅ |
-    | `SUPABASE_ANON_KEY` | Supabase anonymous key | ✅ |
+    | `SUPABASE_URL` | Supabase project URL | ❌ |
+    | `SUPABASE_ANON_KEY` | Supabase anonymous API key | ❌ |
+
+    **Note:** If Supabase credentials are not provided, the following features will be disabled:
+
+    - Member verification (`/verify`)
+    - Event calendar (`/calendar`)
 
 4. **Build the project**
 

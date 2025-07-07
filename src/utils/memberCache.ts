@@ -1,10 +1,11 @@
-import supabase from "../lib/supabaseClient.js";
+import { isSupabaseAvailable, getSupabaseClient } from "../lib/supabaseClient.js";
 import logger from "./logger.js";
 import cron from "node-cron";
 
 /**
  * Caches DUCA membership data (emails and full names) in-memory
  * and refreshes on startup + weekly via a cron schedule.
+ * Falls back to empty cache when Supabase is not available.
  */
 class MemberCache {
     /** Set of lowercase member emails for quick existence checks */
@@ -22,31 +23,61 @@ class MemberCache {
      */
     constructor() {
         // Load cache on startup
-        this.refresh().catch((error) => logger("[membership-cache] " + String(error), "error"));
+        this.refresh().catch((error) => logger("[memberCache] " + String(error), "error"));
 
         // Schedule a weekly refresh every Friday at 20:00 Australia/Melbourne time
-        cron.schedule(
-            "0 20 * * 5",
-            () => {
-                this.refresh()
-                    .then(() => logger("Scheduled membership cache refresh complete", "info"))
-                    .catch((error) => logger("[membership-cache] " + String(error), "error"));
-            },
-            { timezone: "Australia/Melbourne" },
-        );
+        // Only schedule if Supabase is available
+        if (isSupabaseAvailable()) {
+            cron.schedule(
+                "0 20 * * 5",
+                () => {
+                    this.refresh()
+                        .then(() => logger("[memberCache] Scheduled refresh complete", "info"))
+                        .catch((error) => logger("[membership cache] " + String(error), "error"));
+                },
+                { timezone: "Australia/Melbourne" },
+            );
+        } else {
+            logger("[memberCache] Scheduled refresh disabled", "warn");
+        }
     }
 
     /**
      * Fetches fresh member data from Supabase if the cache is stale,
      * then rebuilds the in-memory email set and name map.
+     * Falls back to empty cache when Supabase is not available.
      *
-     * @throws If the database query returns an error.
+     * @throws If the database query returns an error (only when Supabase is available).
      */
     public async refresh(): Promise<void> {
         const now = Date.now();
         // Skip refresh if interval hasn't elapsed
         if (now - this.lastRefresh < this.refreshIntervalMs) {
-            logger("Membership cache refreshed recently, skipping...", "info");
+            logger("[memberCache] Refreshed recently, skipping...", "info");
+            return;
+        }
+
+        // Check if Supabase is available
+        if (!isSupabaseAvailable()) {
+            logger(
+                "[memberCache] Caching inactive as Supabase is disabled. Enable Supabase to restore functionality",
+                "warn",
+            );
+            this.emails.clear();
+            this.nameMap.clear();
+            this.lastRefresh = now;
+            return;
+        }
+
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+            logger(
+                "[memberCache] Caching inactive as Supabase client is unavailable. Enable Supabase to restore functionality",
+                "warn",
+            );
+            this.emails.clear();
+            this.nameMap.clear();
+            this.lastRefresh = now;
             return;
         }
 
@@ -64,31 +95,34 @@ class MemberCache {
         }
 
         this.lastRefresh = now;
-        logger("Membership cache refreshed", "info");
+        logger("[membership cache] Refreshed successfully", "info");
     }
 
     /**
-     * Checks if an email is present in the cache.
-     *
-     * @param email - The member email to test.
-     * @returns True if the email exists in cache; false otherwise.
+     * Checks if an email exists in the membership cache.
+     * @param {string} email - The email to check (case-insensitive).
+     * @returns {boolean} True if the email is in the cache.
      */
     public has(email: string): boolean {
         return this.emails.has(email.trim().toLowerCase());
     }
 
     /**
-     * Retrieves the cached full name for a given email.
-     *
-     * @param email - The member email whose name to fetch.
-     * @returns The full name if found; otherwise undefined.
+     * Gets the full name associated with an email.
+     * @param {string} email - The email to look up (case-insensitive).
+     * @returns {string | undefined} The full name or undefined if not found.
      */
-    public getFullName(email: string): string {
-        return String(this.nameMap.get(email.trim().toLowerCase()));
+    public getFullName(email: string): string | undefined {
+        return this.nameMap.get(email.trim().toLowerCase());
+    }
+
+    /**
+     * Gets the total number of cached members.
+     * @returns {number} The number of members in the cache.
+     */
+    public get size(): number {
+        return this.emails.size;
     }
 }
 
-/**
- * Singleton instance of the MemberCache.
- */
 export default new MemberCache();

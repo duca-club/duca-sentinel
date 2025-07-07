@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
-import supabase from "../../lib/supabaseClient.js";
+import { isSupabaseAvailable, getSupabaseClient } from "../../lib/supabaseClient.js";
 import logger from "../../utils/logger.js";
 
 /**
@@ -43,6 +43,16 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
     const category = interaction.options.getString("category");
 
     try {
+        // — Check if Supabase is available —
+        if (!isSupabaseAvailable()) {
+            throw new Error("Supabase disabled. Enable Supabase to restore functionality");
+        }
+
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+            throw new Error("Supabase client unavailable. Enable Supabase to restore functionality");
+        }
+
         // — Build base query for events on or after today —
         const today = new Date().toISOString().split("T")[0];
         let query = supabase
@@ -100,7 +110,7 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
         const errorEmbed = new EmbedBuilder()
             .setTitle(`$ calendar ${category || ""}`)
             .setDescription(
-                "We’re sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
             )
             .setColor(0xff3333)
             .setFooter({ text: "exit status: 1" });
