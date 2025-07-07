@@ -48,7 +48,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
                 "DUCA Sentinel is the official Discord bot designed and developed for the Deakin University Cybersecurity Association (DUCA) Discord community server.",
             )
             .addFields(
-                { name: "Version", value: "`v2.0.0`", inline: true },
+                { name: "Version", value: "`v2.1.0`", inline: true },
                 { name: "Uptime", value: `\`${uptime}\``, inline: true },
                 { name: "Memory Usage", value: `\`${usedMB} MB / ${totalMB} MB\``, inline: true },
             )
