@@ -1,8 +1,6 @@
 import config from "../config/config.js";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const { SUPABASE_URL, SUPABASE_ANON_KEY: SUPABASE_SERVICE_ROLE } = config;
-
 /**
  * Represents a member who has been verified via Discord.
  */
@@ -56,9 +54,28 @@ interface Database {
 /**
  * Supabase client instance configured with service-role credentials.
  * Provides typed access to the DUCA database.
+ * Only initialized if Supabase credentials are provided.
  *
- * @type {SupabaseClient<Database>}
+ * @type {SupabaseClient<Database> | null}
  */
-const supabase: SupabaseClient<Database> = createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE);
+const supabase: SupabaseClient<Database> | null = config.SUPABASE_ENABLED
+    ? createClient<Database>(config.SUPABASE_URL!, config.SUPABASE_ANON_KEY!)
+    : null;
+
+/**
+ * Checks if Supabase is available and configured.
+ * @returns {boolean} True if Supabase is enabled and client is available.
+ */
+export function isSupabaseAvailable(): boolean {
+    return config.SUPABASE_ENABLED && supabase !== null;
+}
+
+/**
+ * Gets the Supabase client instance.
+ * @returns {SupabaseClient<Database> | null} The Supabase client or null if not available.
+ */
+export function getSupabaseClient(): SupabaseClient<Database> | null {
+    return supabase;
+}
 
 export default supabase;

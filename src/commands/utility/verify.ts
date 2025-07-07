@@ -1,7 +1,7 @@
 import config from "../../config/config.js";
 import { ApplicationCommandOptionType, EmbedBuilder, MessageFlags } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
-import supabase from "../../lib/supabaseClient.js";
+import { isSupabaseAvailable, getSupabaseClient } from "../../lib/supabaseClient.js";
 import memberCache from "../../utils/memberCache.js";
 import logger from "../../utils/logger.js";
 
@@ -44,6 +44,11 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         const userId = interaction.user.id;
         const username = interaction.user.username;
 
+        // — Supabase Check —
+        if (!isSupabaseAvailable()) {
+            throw new Error("Supabase disabled. Enable Supabase to restore functionality");
+        }
+
         // — Guild & Role Setup —
         const guild = client.guilds.cache.get(GUILD_ID);
         if (!guild) {
@@ -61,6 +66,11 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         const member = await guild.members.fetch(userId);
 
         // — Existing Verification Check —
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+            throw new Error("Supabase client unavailable. Enable Supabase to restore functionality");
+        }
+
         const { data: existing, error: fetchError } = await supabase
             .from("verified_members")
             .select("discord_id")
@@ -93,6 +103,10 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             return safeReply(interaction, createErrorEmbed());
         }
         const fullName = memberCache.getFullName(email);
+        if (!fullName) {
+            logger("[/verify] Could not retrieve full name", "error", username);
+            return safeReply(interaction, createErrorEmbed());
+        }
 
         // — Role Assignment & Database Upsert —
         try {
@@ -135,7 +149,7 @@ function createErrorEmbed(): EmbedBuilder {
     return new EmbedBuilder()
         .setTitle("$ verify")
         .setDescription(
-            "We’re sorry — an unexpected error occurred.\n Please try again later or contact an administrator if the issue persists.",
+            "We're sorry — an unexpected error occurred.\n Please try again later or contact an administrator if the issue persists.",
         )
         .addFields({
             name: "Known Issues",
