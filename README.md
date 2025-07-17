@@ -74,13 +74,15 @@ duca-sentinel/
     | `GUILD_ID` | Discord server ID | ✅ |
     | `DEV_ROLE_ID` | Developer role ID for dev commands | ✅ |
     | `MEMBER_ROLE_ID` | Member role ID (for verification) | ✅ |
+    | `NEWS_CHANNEL_ID` | Channel ID for cyber news posts | ❌ |
     | `SUPABASE_URL` | Supabase project URL | ❌ |
     | `SUPABASE_ANON_KEY` | Supabase anonymous API key | ❌ |
 
-    **Note:** If Supabase credentials are not provided, the following features will be disabled:
-
-    - Member verification (`/verify`)
-    - Event calendar (`/calendar`)
+    **Note:**
+    - If Supabase credentials are not provided, the following features will be disabled:
+      - Member verification (`/verify`)
+      - Event calendar (`/calendar`)
+    - If `NEWS_CHANNEL_ID` is not provided, the cyber news posting feature will be disabled.
 
 4. **Build the project**
 
