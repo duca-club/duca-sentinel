@@ -3,6 +3,8 @@ import { Client, IntentsBitField } from "discord.js";
 import { CommandKit } from "commandkit";
 import { dirname as dn } from "node:path";
 import { fileURLToPath } from "node:url";
+import { initialiseNewsScheduler } from "./utils/newsScheduler.js";
+import { postNews } from "./utils/newsPoster.js";
 
 const dirname = dn(fileURLToPath(import.meta.url));
 const { DISCORD_TOKEN, DEV_ROLE_ID, GUILD_ID } = config;
@@ -27,6 +29,13 @@ new CommandKit({
     devGuildIds: [GUILD_ID],
     devRoleIds: [DEV_ROLE_ID],
     bulkRegister: true,
+});
+
+// Initialise news scheduler when client is ready
+client.once("ready", () => {
+    initialiseNewsScheduler(client);
+    console.log("Attempting to post news");
+    postNews(client);
 });
 
 client.login(DISCORD_TOKEN);

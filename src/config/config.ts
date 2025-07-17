@@ -35,6 +35,8 @@ function getOptionalEnvVar(name: string): string | undefined {
  * @property {string | undefined} SUPABASE_URL - The URL of the Supabase instance (optional).
  * @property {string | undefined} SUPABASE_ANON_KEY - The Supabase anon API key (optional).
  * @property {boolean} SUPABASE_ENABLED - Whether Supabase functionality is available.
+ * @property {string | undefined} NEWS_CHANNEL_ID - The Discord channel ID for news posts (optional).
+ * @property {boolean} NEWS_ENABLED - Whether news functionality is available.
  */
 interface Config {
     DISCORD_TOKEN: string;
@@ -44,6 +46,8 @@ interface Config {
     SUPABASE_URL?: string;
     SUPABASE_ANON_KEY?: string;
     SUPABASE_ENABLED: boolean;
+    NEWS_CHANNEL_ID?: string;
+    NEWS_ENABLED: boolean;
 }
 
 /**
@@ -58,6 +62,8 @@ const config: Config = {
     SUPABASE_URL: getOptionalEnvVar("SUPABASE_URL"),
     SUPABASE_ANON_KEY: getOptionalEnvVar("SUPABASE_ANON_KEY"),
     SUPABASE_ENABLED: !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY),
+    NEWS_CHANNEL_ID: getOptionalEnvVar("NEWS_CHANNEL_ID"),
+    NEWS_ENABLED: !!(process.env.NEWS_CHANNEL_ID),
 };
 
 export default config;
