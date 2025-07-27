@@ -25,7 +25,7 @@ export async function postNews(client: Client, isCritical: boolean = false): Pro
         }
 
         // Fetch latest news
-        const articles = await fetchLatestNews(3);
+        const articles = await fetchLatestNews(isCritical ? 1 : 3);
         if (articles.length === 0) {
             logger("[newsPoster] No articles to post", "warn");
             return;
@@ -35,7 +35,7 @@ export async function postNews(client: Client, isCritical: boolean = false): Pro
         const embed = new EmbedBuilder()
             .setTitle(isCritical ? "🚨 CRITICAL CYBER NEWS ALERT" : "📰 Latest Cyber News")
             .setColor(isCritical ? 0xff3333 : 0x00aeef)
-            .setDescription(`Top ${articles.length} articles from The Hacker News`)
+            .setDescription(isCritical ? "Critical article from The Hacker News" : `Top ${articles.length} articles from The Hacker News`)
             .setFooter({ text: "The Hacker News" })
             .setTimestamp();
 
