@@ -1,5 +1,5 @@
 import config from "../../config/config.js";
-import { ApplicationCommandOptionType, EmbedBuilder, MessageFlags } from "discord.js";
+import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import { isSupabaseAvailable, getSupabaseClient } from "../../lib/supabaseClient.js";
 import memberCache from "../../utils/memberCache.js";
@@ -36,8 +36,8 @@ export const data: CommandData = {
  */
 export async function run({ interaction, client }: SlashCommandProps): Promise<void> {
     try {
-        // Use an ephemeral response to keep verification private
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        // Defer reply ephemerally by default; post public success separately
+        await interaction.deferReply({ ephemeral: true });
 
         const { MEMBER_ROLE_ID, GUILD_ID } = config;
         const email = interaction.options.getString("email")!.trim().toLowerCase();
@@ -134,7 +134,14 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         }
 
         logger("[/verify]", "success", username);
-        return safeReply(interaction, createSuccessEmbed(role.toString()));
+        try {
+            await interaction.deleteReply();
+        } catch {}
+        await interaction.followUp({
+            embeds: [createSuccessEmbed(role.toString(), `<@${userId}>`)],
+            ephemeral: false,
+        });
+        return;
     } catch (error) {
         logger("[/verify] " + String(error), "error", interaction.user.username);
         return safeReply(interaction, createErrorEmbed());
@@ -162,13 +169,15 @@ function createErrorEmbed(): EmbedBuilder {
 /**
  * Success embed.
  * @param {string} roleName
+ * @param {string} mention - user mention to include in the embed
  * @returns {EmbedBuilder}
  */
-function createSuccessEmbed(roleName: string): EmbedBuilder {
+function createSuccessEmbed(roleName: string, mention?: string): EmbedBuilder {
+    const header = mention ? `${mention} You have been granted ${roleName}!` : `You have been granted ${roleName}!`;
     return new EmbedBuilder()
         .setTitle("$ verify")
         .setDescription(
-            `**You have been granted ${roleName}!**\n Explore ${MEMBER_ANNOUNCEMENTS_CHANNEL} and ${MEMBER_RESOURCES_CHANNEL} for exclusive member content.`,
+            `**${header}**\n Explore ${MEMBER_ANNOUNCEMENTS_CHANNEL} and ${MEMBER_RESOURCES_CHANNEL} for exclusive member content.`,
         )
         .setColor(0x33cc33)
         .setFooter({ text: "Thank you for being a valued DUCA member 💗" });
@@ -191,12 +200,23 @@ function createInfoEmbed(roleName: string): EmbedBuilder {
  * Replies or edits the interaction safely based on deferred state.
  * @param {import('discord.js').Interaction} interaction
  * @param {EmbedBuilder} embed
+ * @param {boolean} ephemeral - Whether the response should be ephemeral
  */
-const safeReply = async (interaction: any, embed: EmbedBuilder) => {
+const safeReply = async (interaction: any, embed: EmbedBuilder, ephemeral: boolean = true) => {
     try {
-        return interaction.deferred
-            ? interaction.editReply({ embeds: [embed] })
-            : interaction.reply({ embeds: [embed] });
+        if (interaction.deferred) {
+            // For deferred interactions, edit the reply (stays ephemeral if originally deferred ephemerally)
+            if (ephemeral) {
+                return interaction.editReply({ embeds: [embed] });
+            }
+            // remove the ephemeral placeholder if possible and follow up publicly
+            try {
+                await interaction.deleteReply();
+            } catch {}
+            return interaction.followUp({ embeds: [embed], ephemeral: false });
+        }
+        // Not deferred: reply directly with proper ephemeral flag
+        return interaction.reply({ embeds: [embed], ephemeral });
     } catch (err) {
         logger("[/verify] Failed to send reply: " + String(err), "error", interaction.user.username);
     }
