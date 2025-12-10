@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
 import { ButtonKit, type CommandData, type SlashCommandProps } from "commandkit";
 import logger from "../../utils/logger.js";
+import packageJson from "../../../package.json" with { type: "json" };
 
 /**
  * Slash command definition for whoami.
@@ -48,7 +49,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
                 "DUCA Sentinel is the official Discord bot designed and developed for the Deakin University Cybersecurity Association (DUCA) Discord community server.",
             )
             .addFields(
-                { name: "Version", value: "`v2.1.0`", inline: true },
+                { name: "Version", value: `\`v${packageJson.version}\``, inline: true },
                 { name: "Uptime", value: `\`${uptime}\``, inline: true },
                 { name: "Memory Usage", value: `\`${usedMB} MB / ${totalMB} MB\``, inline: true },
             )
