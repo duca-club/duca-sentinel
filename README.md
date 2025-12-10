@@ -32,8 +32,8 @@ duca-sentinel/
 ├── .gitlab-ci.yml
 ├── .prettierrc          # Prettier config
 ├── CONTRIBUTING.md
-├── package-lock.json
 ├── package.json         # Project metadata & dependencies
+├── pnpm-lock.yaml       # pnpm lock file
 ├── README.md
 └── tsconfig.json        # TypeScript configuration
 ```
@@ -56,7 +56,7 @@ duca-sentinel/
 2. **Install dependencies**
 
     ```bash
-    npm install
+    pnpm install
     ```
 
 3. **Set up environment variables**
@@ -80,19 +80,19 @@ duca-sentinel/
 
     **Note:**
     - If Supabase credentials are not provided, the following features will be disabled:
-      - Member verification (`/verify`)
-      - Event calendar (`/calendar`)
+        - Member verification (`/verify`)
+        - Event calendar (`/calendar`)
     - If `NEWS_CHANNEL_ID` is not provided, the cyber news posting feature will be disabled.
 
 4. **Build the project**
 
     ```bash
-    npm run build
+    pnpm run build
     ```
 
 5. **Start the bot**
     ```bash
-    npm start
+    pnpm start
     ```
 
 ## 🤝 Contributing
