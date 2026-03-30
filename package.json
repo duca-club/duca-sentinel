@@ -1,36 +1,22 @@
 {
-    "name": "duca-sentinel",
-    "version": "2.1.0",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "start": "node ./dist/index.js",
-        "dev": "tsx watch ./src/index.ts",
-        "build": "tsc",
-        "format": "prettier --write .",
-        "prepare": "husky"
-    },
-    "dependencies": {
-        "@supabase/supabase-js": "2.49.1",
-        "colors": "^1.4.0",
-        "commandkit": "^0.1.10",
-        "discord.js": "^14.25.1",
-        "dotenv": "^16.6.1",
-        "moment": "^2.30.1",
-        "node-cron": "^3.0.3",
-        "rss-parser": "^3.13.0"
-    },
-    "devDependencies": {
-        "@types/node": "^22.19.2",
-        "@types/node-cron": "^3.0.11",
-        "husky": "^9.1.7",
-        "lint-staged": "^16.2.7",
-        "prettier": "^3.7.4",
-        "tsx": "^4.21.0",
-        "typescript": "^5.9.3"
-    },
-    "lint-staged": {
-        "*.{js,md}": "prettier --write"
-    },
-    "packageManager": "pnpm@10.25.0+sha512.5e82639027af37cf832061bcc6d639c219634488e0f2baebe785028a793de7b525ffcd3f7ff574f5e9860654e098fe852ba8ac5dd5cefe1767d23a020a92f501"
+	"name": "duca-sentinel",
+	"version": "3.0.0",
+	"type": "module",
+	"private": true,
+	"main": "dist/index.js",
+	"scripts": {
+		"biome": "pnpx @biomejs/biome check --write",
+		"build": "commandkit build",
+		"dev": "commandkit dev",
+		"start": "commandkit start"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.9",
+		"@types/node": "^24.0.10",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"commandkit": "^1.2.1",
+		"discord.js": "^14.25.1"
+	}
 }
