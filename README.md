@@ -1,8 +1,7 @@
 # DUCA Sentinel
 
-![Version](https://img.shields.io/badge/version-2.1.0-blue.svg?style=for-the-badge)
-![NodeJS](https://img.shields.io/badge/NodeJS-v22%2B-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white&logoSize=auto)
-![Prettier](https://img.shields.io/badge/Prettier-%23F7B93E?style=for-the-badge&logo=prettier&logoColor=black&logoSize=auto)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg?style=for-the-badge)
+![NodeJS](https://img.shields.io/badge/NodeJS-v24%2B-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white&logoSize=auto)
 
 Official Discord bot for the **Deakin University Cybersecurity Association (DUCA)** Discord community server.  
 DUCA Sentinel provides member verification, utility commands, and entertainment features to enhance the server experience.
@@ -11,38 +10,34 @@ DUCA Sentinel provides member verification, utility commands, and entertainment 
 
 ```
 duca-sentinel/
-├── .husky/              # Git pre-commit hooks
-│
 ├── dist/                # Compiled JavaScript output
 │
 ├── emojis/              # Custom emoji assets
 │
 ├── src/
-│   ├── commands/        # Discord slash commands
-│   ├── config/
-│   ├── events/          # Discord event handlers
-│   ├── lib/             # External libraries
-│   ├── utils/           # Utility/helper functions
-│   └── index.ts
+│   ├── app/
+│   │   ├── commands/    # Slash commands (tsx uses CommandKit components)
+│   │   ├── events/      # Discord event handlers
+│   │   └── tasks/       # @commandkit/tasks schedules
+│   ├── flags/           # Feature flag definitions
+│   ├── lib/             # Supabase client, env config, news helpers
+│   └── providers/       # Flag provider implementations
 │
-├── .env                 # Environment variables
-├── .env.exampple        # Example environment variables
-├── .gitattributes       # Git config
-├── .gitignore           # Git ignore
-├── .gitlab-ci.yml
-├── .prettierrc          # Prettier config
-├── CONTRIBUTING.md
-├── package.json         # Project metadata & dependencies
-├── pnpm-lock.yaml       # pnpm lock file
-├── README.md
-└── tsconfig.json        # TypeScript configuration
+├── commandkit.config.ts
+├── package.json
+├── pnpm-lock.yaml
+├── tsconfig.json
+└── README.md
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- **Node.js** (v22 or higher)
+- **Node.js** v24+
+- **pnpm**
+- A **Discord application + bot token**
+- A **Supabase project** (database + service role key)
 
 ### Installation
 
@@ -68,21 +63,21 @@ duca-sentinel/
     ```
 
     Configure environment variables:
-    | Variable | Description | Required |
-    |----------|-------------|----------|
-    | `DISCORD_TOKEN` | Your Discord bot token | ✅ |
-    | `GUILD_ID` | Discord server ID | ✅ |
-    | `DEV_ROLE_ID` | Developer role ID for dev commands | ✅ |
-    | `MEMBER_ROLE_ID` | Member role ID (for verification) | ✅ |
-    | `NEWS_CHANNEL_ID` | Channel ID for cyber news posts | ❌ |
-    | `SUPABASE_URL` | Supabase project URL | ❌ |
-    | `SUPABASE_ANON_KEY` | Supabase anonymous API key | ❌ |
+    | Variable | Required | Description |
+	|---|---:|---|
+	| `DISCORD_TOKEN` | ✅ | Discord bot token |
+	| `MEMBER_ROLE_ID` | ✅ | Role ID assigned on successful verification |
+	| `NEWS_CHANNEL_ID` | ✅ | Channel ID where news posts will be sent |
+	| `SUPABASE_URL` | ✅ | Supabase project URL |
+	| `SUPABASE_SECRET_KEY` | ✅ | Supabase **service role** key (server-side) |
+	| `NEWS_TIMEZONE` | ⛔ | Digest timezone (default `Australia/Sydney`) |
+	| `NEWS_DIGEST_CRON` | ⛔ | Digest schedule (default `0 9,17 * * *`) |
+	| `NEWS_ALERT_CRON` | ⛔ | Alerts schedule (default `0 * * * *`) |
+	| `NEWS_ALERT_KEYWORDS` | ⛔ | Comma-separated keywords (default `critical,zero-day,zero day`) |
 
-    **Note:**
-    - If Supabase credentials are not provided, the following features will be disabled:
-        - Member verification (`/verify`)
-        - Event calendar (`/calendar`)
-    - If `NEWS_CHANNEL_ID` is not provided, the cyber news posting feature will be disabled.
+	Notes:
+	- `NEWS_FEED_URL` is currently set in code to `https://feeds.feedburner.com/TheHackersNews`.
+	- The alerts task runs in a fixed timezone (`Asia/Kolkata`) to align with the RSS feed timestamp behavior.
 
 4. **Build the project**
 
@@ -104,7 +99,7 @@ Please refer to the [contribution guideline](CONTRIBUTING.md) for more details.
 Developing this project is possible thanks to the following tools:
 
 - [discord.js](https://discord.js.org) - Powerful Node.js module that allows interaction with the Discord API.
-- [CommandKit](https://commandkit.js.org) - A discord.js handler for commands and events.
+- [CommandKit](https://commandkit.dev) - A discord.js handler for commands and events.
 - [Supabase](https://supabase.com) - Open-source Firebase alternative.
 
 ---
