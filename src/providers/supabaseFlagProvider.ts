@@ -1,5 +1,5 @@
 import { Logger } from "commandkit/logger";
-import { supabaseClient } from "../lib/supabaseClient.js";
+import { supabase } from "../lib/supabaseClient.js";
 
 interface FeatureFlagRow {
 	enabled: boolean;
@@ -12,7 +12,7 @@ interface SupabaseFlagConfiguration {
 
 export class SupabaseFlagProvider {
 	async getFlag(key: string): Promise<SupabaseFlagConfiguration | null> {
-		const { data, error } = await supabaseClient
+		const { data, error } = await supabase
 			.from("feature_flags")
 			.select("feature, enabled")
 			.eq("feature", key)
@@ -33,7 +33,7 @@ export class SupabaseFlagProvider {
 	}
 
 	async hasFlag(key: string): Promise<boolean> {
-		const { data, error } = await supabaseClient
+		const { data, error } = await supabase
 			.from("feature_flags")
 			.select("feature")
 			.eq("feature", key)
