@@ -44,21 +44,21 @@ export const chatInput: ChatInputCommand = async ({ interaction, client }) => {
 	const buttonRow = (
 		<ActionRow>
 			<Button
-				emoji={"<:userplusbold:1493935342506741880>"}
+				emoji={"<:user_bold_96px_00aeef:1503237142753841212>"}
 				style={ButtonStyle.Link}
 				url="https://www.dusa.org.au/clubs/deakin-university-cybersecurity-association-burwood-duca"
 			>
 				Join DUCA
 			</Button>
 			<Button
-				emoji={"<:linktreelogobold:1493933916946567198>"}
+				emoji={"<:linktree_bold__96px_00aeef:1503237140836909109>"}
 				style={ButtonStyle.Link}
 				url="https://linktr.ee/ducaclub"
 			>
 				Socials
 			</Button>
 			<Button
-				emoji={"<:githublogobold:1493933919039651870>"}
+				emoji={"<:github_bold_96px_00aeef:1503237138643288154>"}
 				style={ButtonStyle.Link}
 				url="https://github.com/duca-club/duca-sentinel"
 			>

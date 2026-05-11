@@ -17,13 +17,14 @@ import {
 } from "discord.js";
 import isEmail from "validator/lib/isEmail";
 import { verifyMemberFlag } from "../../../flags/verifyCommandFlag.ts";
-import { supabaseClient } from "../../../lib/supabaseClient.ts";
+import envConfig from "../../../lib/envConfig.ts";
+import { supabase } from "../../../lib/supabaseClient.ts";
 
-const MEMBER_ROLE_ID = process.env.MEMBER_ROLE_ID!;
-const MEMBER_ANNOUNCEMENTS_CHANNEL = "<#1365844506636849224>";
-const MEMBER_RESOURCES_CHANNEL = "<#1365844612228448407>";
-const MEMBER_CHAT_CHANNEL = "<#1485613248936935434>";
-const DUCA_LOGO = "<:duca_logo:1364096341310963752>";
+const MEMBER_ROLE_ID = envConfig.MEMBER_ROLE_ID;
+const MEMBER_ANNOUNCEMENTS_CHANNEL = "<#1347067213160644659>";
+const MEMBER_RESOURCES_CHANNEL = "<#1344439191110422588>";
+const MEMBER_CHAT_CHANNEL = "<#1344438888365555833>";
+const DUCA_LOGO = "<:duca_logo:1494581566960173056>";
 
 // Allow 3 verification attempts per user per 10 minutes
 const MAX_REQUESTS = 3;
@@ -154,7 +155,7 @@ async function upsertVerifiedMember(args: {
 }): Promise<void> {
 	const { discordId, email, fullName, discordUsername } = args;
 
-	const result = await supabaseClient.from("verified_members").upsert(
+	const result = await supabase.from("verified_members").upsert(
 		{
 			discord_id: discordId,
 			email,
@@ -198,10 +199,7 @@ export const chatInput: ChatInputCommand = async ({ interaction }) => {
 	const remainingRequests = await verifyRateLimiter.getRemaining(getRateLimitKey(interaction));
 	if (!featureEnabled) {
 		await interaction.editReply(
-			infoEmbed(
-				"This command is currently disabled. Please try again later.",
-				remainingRequests,
-			),
+			infoEmbed("This command is currently disabled. Please try again later.", remainingRequests),
 		);
 		Logger.info(
 			`[username=${interaction.user.username}, guildID=${interaction.guildId ?? "DM"}] Command disabled via feature flag`,
@@ -254,7 +252,7 @@ export const chatInput: ChatInputCommand = async ({ interaction }) => {
 	3) ONLY if NO `discord_id` row exists, look up `verified_members` by `email` (answers: if email registered by another account). */
 	const discordID = interaction.user.id;
 
-	const memberListResult = await supabaseClient
+	const memberListResult = await supabase
 		.from("member_list")
 		.select("email, full_name, student_id")
 		.eq("email", email)
@@ -282,7 +280,7 @@ export const chatInput: ChatInputCommand = async ({ interaction }) => {
 		return;
 	}
 
-	const verifiedByDiscord = await supabaseClient
+	const verifiedByDiscord = await supabase
 		.from("verified_members")
 		.select("discord_id, email")
 		.eq("discord_id", discordID)
@@ -337,7 +335,7 @@ export const chatInput: ChatInputCommand = async ({ interaction }) => {
 	}
 
 	// Edge case: No verified row for this discord_id. Check if the provided email is linked to another discord account.
-	const verifiedByEmail = await supabaseClient
+	const verifiedByEmail = await supabase
 		.from("verified_members")
 		.select("discord_id, email")
 		.eq("email", email)

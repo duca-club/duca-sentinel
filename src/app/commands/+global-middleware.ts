@@ -3,7 +3,7 @@ import { useEnvironment } from "commandkit";
 import { Logger } from "commandkit/logger";
 import { MessageFlags } from "discord.js";
 
-const GENERIC_ERROR_MESSAGE = "Something went wrong. Please try again later.";
+const ERROR_MESSAGE = "Something went wrong. Please try again later.";
 
 export async function afterExecute(ctx: MiddlewareContext) {
 	const error = useEnvironment().getExecutionError();
@@ -17,10 +17,10 @@ export async function afterExecute(ctx: MiddlewareContext) {
 	try {
 		if (interaction.replied || interaction.deferred) {
 			await interaction
-				.editReply({ content: GENERIC_ERROR_MESSAGE })
-				.catch(() => interaction.followUp({ content: GENERIC_ERROR_MESSAGE, flags: MessageFlags.Ephemeral }));
+				.editReply({ content: ERROR_MESSAGE })
+				.catch(() => interaction.followUp({ content: ERROR_MESSAGE, flags: MessageFlags.Ephemeral }));
 		} else {
-			await interaction.reply({ content: GENERIC_ERROR_MESSAGE, flags: MessageFlags.Ephemeral });
+			await interaction.reply({ content: ERROR_MESSAGE, flags: MessageFlags.Ephemeral });
 		}
 	} catch (replyError) {
 		Logger.error(
