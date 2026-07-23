@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "duca-sentinel"
+description = "Official Discord bot for the Deakin University Cybersecurity Association (DUCA)"
+readme = "README.md"
+requires-python = ">=3.12"
+dynamic = ["version"]
+dependencies = [
+	"APScheduler>=3.11.0",
+	"discord.py>=2.7.1",
+	"email-validator>=2.2.0",
+	"feedparser>=6.0.11",
+	"python-dotenv>=1.0.1",
+	"supabase>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.14.0"]
+
+[project.scripts]
+duca-sentinel = "duca_sentinel.__main__:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "duca_sentinel.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# Mirrors biome.json / .editorconfig: tabs, width 4, 120 columns.
+[tool.ruff]
+line-length = 120
+indent-width = 4
+src = ["src"]
+
+[tool.ruff.format]
+indent-style = "tab"
+quote-style = "double"
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["duca_sentinel"]
