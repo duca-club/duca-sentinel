@@ -46,6 +46,7 @@ class EnvConfig:
 	NEWS_DIGEST_CRON: str
 	NEWS_FEED_URL: str
 	NEWS_TIMEZONE: str
+	PLATFORM_GUILD_ID: str | None
 	SUPABASE_SECRET_KEY: str
 	SUPABASE_URL: str
 
@@ -61,4 +62,6 @@ env_config = EnvConfig(
 	NEWS_DIGEST_CRON=get_optional_env_var("NEWS_DIGEST_CRON") or "0 9,17 * * *",
 	NEWS_ALERT_CRON=get_optional_env_var("NEWS_ALERT_CRON") or "0 * * * *",
 	NEWS_ALERT_KEYWORDS=get_optional_env_var("NEWS_ALERT_KEYWORDS") or "critical,zero-day,zero day",
+	# The guild the staff platform manages. Optional so the bot still runs standalone.
+	PLATFORM_GUILD_ID=get_optional_env_var("PLATFORM_GUILD_ID"),
 )
