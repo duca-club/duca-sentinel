@@ -32,6 +32,7 @@ class Task:
 	timezone: str
 	execute: Callable[[TaskContext], Awaitable[None]]
 	prepare: Callable[[], Awaitable[bool]] | None = None
+	second: str = "0"
 
 
 _registry: list[Task] = []
@@ -44,6 +45,7 @@ def task(
 	timezone: str,
 	execute: Callable[[TaskContext], Awaitable[None]],
 	prepare: Callable[[], Awaitable[bool]] | None = None,
+	second: str = "0",
 ) -> Task:
 	"""
 	Registers a task to run on a cron schedule.
@@ -53,10 +55,30 @@ def task(
 	:param timezone: IANA timezone the schedule is interpreted in.
 	:param execute: The work to perform on each run.
 	:param prepare: Optional gate; when it returns False the run is skipped.
+	:param second: Seconds field, for tasks that need to run more than once a minute.
 	"""
-	registered = Task(name=name, schedule=schedule, timezone=timezone, execute=execute, prepare=prepare)
+	registered = Task(
+		name=name, schedule=schedule, timezone=timezone, execute=execute, prepare=prepare, second=second
+	)
 	_registry.append(registered)
 	return registered
+
+
+def _trigger_for(registered: Task) -> CronTrigger:
+	"""
+	Builds the trigger. Crontab has no seconds field, so it is applied separately rather
+	than through `from_crontab`.
+	"""
+	minute, hour, day, month, day_of_week = registered.schedule.split()
+	return CronTrigger(
+		minute=minute,
+		hour=hour,
+		day=day,
+		month=month,
+		day_of_week=day_of_week,
+		second=registered.second,
+		timezone=ZoneInfo(registered.timezone),
+	)
 
 
 async def _run(registered: Task, client: commands.Bot) -> None:
@@ -77,11 +99,14 @@ def start_scheduled_tasks(client: commands.Bot) -> None:
 	for registered in _registry:
 		_scheduler.add_job(
 			_run,
-			CronTrigger.from_crontab(registered.schedule, timezone=ZoneInfo(registered.timezone)),
+			_trigger_for(registered),
 			args=[registered, client],
 			id=registered.name,
 			replace_existing=True,
 		)
-		Logger.info(f"[tasks] Scheduled '{registered.name}' ({registered.schedule} {registered.timezone})")
+		cadence = f"{registered.schedule} {registered.timezone}"
+		if registered.second != "0":
+			cadence += f" (seconds: {registered.second})"
+		Logger.info(f"[tasks] Scheduled '{registered.name}' ({cadence})")
 
 	_scheduler.start()
