@@ -4,9 +4,10 @@ from discord.ext import commands
 from duca_sentinel.app.commands.global_middleware import on_app_command_error
 from duca_sentinel.app.events.client_ready import log as client_ready_log
 from duca_sentinel.app.events.client_ready import set_activity as client_ready_set_activity
+from duca_sentinel.app.events.client_ready import sync_channels as client_ready_sync_channels
 
 # Importing the task modules registers their cron schedules with the task registry.
-from duca_sentinel.app.tasks import news_alerts, news_digest  # noqa: F401
+from duca_sentinel.app.tasks import announcement_dispatch, news_alerts, news_digest  # noqa: F401
 from duca_sentinel.lib import emojis
 from duca_sentinel.lib.feature_flags import set_flag_provider
 from duca_sentinel.lib.logger import Logger
@@ -50,6 +51,7 @@ class DucaSentinel(commands.Bot):
 	async def on_ready(self) -> None:
 		await client_ready_log.handler(self)
 		await client_ready_set_activity.handler(self)
+		await client_ready_sync_channels.handler(self)
 
 		# Reconnects re-fire this event; scheduling is guarded so it only takes effect once.
 		start_scheduled_tasks(self)
