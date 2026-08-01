@@ -1,7 +1,7 @@
 # DUCA Sentinel
 
 ![Version](https://img.shields.io/badge/version-3.0.0-blue.svg?style=for-the-badge)
-![NodeJS](https://img.shields.io/badge/NodeJS-v24%2B-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white&logoSize=auto)
+![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?style=for-the-badge&logo=python&logoColor=white&logoSize=auto)
 
 Official Discord bot for the **Deakin University Cybersecurity Association (DUCA)** Discord community server.  
 DUCA Sentinel provides member verification, utility commands, and entertainment features to enhance the server experience.
@@ -10,23 +10,20 @@ DUCA Sentinel provides member verification, utility commands, and entertainment 
 
 ```
 duca-sentinel/
-├── dist/                # Compiled JavaScript output
+├── emojis/                  # Custom emoji assets
 │
-├── emojis/              # Custom emoji assets
-│
-├── src/
+├── src/duca_sentinel/
 │   ├── app/
-│   │   ├── commands/    # Slash commands (tsx uses CommandKit components)
-│   │   ├── events/      # Discord event handlers
-│   │   └── tasks/       # @commandkit/tasks schedules
-│   ├── flags/           # Feature flag definitions
-│   ├── lib/             # Supabase client, env config, news helpers
-│   └── providers/       # Flag provider implementations
+│   │   ├── commands/        # Slash commands, loaded as discord.py extensions
+│   │   ├── events/          # Discord event handlers
+│   │   └── tasks/           # Cron-scheduled background tasks
+│   ├── flags/               # Feature flag definitions
+│   ├── lib/                 # Supabase client, env config, news helpers
+│   ├── providers/           # Flag provider implementations
+│   ├── bot.py               # Client construction and startup wiring
+│   └── __main__.py          # Entry point
 │
-├── commandkit.config.ts
-├── package.json
-├── pnpm-lock.yaml
-├── tsconfig.json
+├── pyproject.toml
 └── README.md
 ```
 
@@ -34,8 +31,7 @@ duca-sentinel/
 
 ### Prerequisites
 
-- **Node.js** v24+
-- **pnpm**
+- **Python** 3.12+
 - A **Discord application + bot token**
 - A **Supabase project** (database + service role key)
 
@@ -48,11 +44,15 @@ duca-sentinel/
     cd duca-sentinel
     ```
 
-2. **Install dependencies**
+2. **Create a virtual environment and install dependencies**
 
     ```bash
-    pnpm install
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -e .
     ```
+
+    Add the `dev` extra (`pip install -e ".[dev]"`) to also install [Ruff](https://docs.astral.sh/ruff/) for linting and formatting.
 
 3. **Set up environment variables**
 
@@ -79,16 +79,20 @@ duca-sentinel/
 	- `NEWS_FEED_URL` is currently set in code to `https://feeds.feedburner.com/TheHackersNews`.
 	- The alerts task runs in a fixed timezone (`Asia/Kolkata`) to align with the RSS feed timestamp behavior.
 
-4. **Build the project**
+4. **Start the bot**
 
     ```bash
-    pnpm run build
+    python -m duca_sentinel
     ```
 
-5. **Start the bot**
-    ```bash
-    pnpm start
-    ```
+    Slash commands are synced globally on startup, which can take up to an hour to propagate to Discord.
+
+### Linting & formatting
+
+```bash
+ruff check src
+ruff format src
+```
 
 ## 🤝 Contributing
 
@@ -98,8 +102,8 @@ Please refer to the [contribution guideline](CONTRIBUTING.md) for more details.
 
 Developing this project is possible thanks to the following tools:
 
-- [discord.js](https://discord.js.org) - Powerful Node.js module that allows interaction with the Discord API.
-- [CommandKit](https://commandkit.dev) - A discord.js handler for commands and events.
+- [discord.py](https://discordpy.readthedocs.io) - Modern, feature-rich API wrapper for Discord written in Python.
+- [APScheduler](https://apscheduler.readthedocs.io) - In-process task scheduler with cron-like scheduling.
 - [Supabase](https://supabase.com) - Open-source Firebase alternative.
 
 ---
