@@ -7,7 +7,7 @@ from duca_sentinel.app.events.client_ready import set_activity as client_ready_s
 from duca_sentinel.app.events.client_ready import sync_channels as client_ready_sync_channels
 
 # Importing the task modules registers their cron schedules with the task registry.
-from duca_sentinel.app.tasks import announcement_dispatch, news_alerts, news_digest, social_handoff  # noqa: F401
+from duca_sentinel.app.tasks import announcement_dispatch, news_alerts, news_digest, social_dispatch  # noqa: F401
 from duca_sentinel.lib import emojis
 from duca_sentinel.lib.feature_flags import set_flag_provider
 from duca_sentinel.lib.logger import Logger

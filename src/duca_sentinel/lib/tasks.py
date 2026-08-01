@@ -57,9 +57,7 @@ def task(
 	:param prepare: Optional gate; when it returns False the run is skipped.
 	:param second: Seconds field, for tasks that need to run more than once a minute.
 	"""
-	registered = Task(
-		name=name, schedule=schedule, timezone=timezone, execute=execute, prepare=prepare, second=second
-	)
+	registered = Task(name=name, schedule=schedule, timezone=timezone, execute=execute, prepare=prepare, second=second)
 	_registry.append(registered)
 	return registered
 

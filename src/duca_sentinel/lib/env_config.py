@@ -48,6 +48,13 @@ class EnvConfig:
 	NEWS_TIMEZONE: str
 	PLATFORM_GUILD_ID: str | None
 	SOCIAL_HANDOFF_CHANNEL_ID: str | None
+	ZERNIO_API_KEY: str | None
+	#: Only needed when more than one account of a platform is connected; without it the
+	#: single connected account is used and two would be a coin toss.
+	ZERNIO_ACCOUNT_OVERRIDES: dict[str, str]
+	#: The DUCA company page, as `urn:li:organization:123456`. Without it a LinkedIn post
+	#: would go out under the personal profile of whoever linked the account.
+	ZERNIO_LINKEDIN_ORGANIZATION_URN: str | None
 	SUPABASE_SECRET_KEY: str
 	SUPABASE_URL: str
 
@@ -68,4 +75,13 @@ env_config = EnvConfig(
 	# Where scheduled Instagram and LinkedIn posts get handed to a person. Optional: without
 	# it the hand-off task stays asleep rather than guessing at a channel.
 	SOCIAL_HANDOFF_CHANNEL_ID=get_optional_env_var("SOCIAL_HANDOFF_CHANNEL_ID"),
+	# Publishing to Instagram and LinkedIn. Optional: without a key, and until the feature
+	# flags are switched on, every due post is handed to a person instead.
+	ZERNIO_API_KEY=get_optional_env_var("ZERNIO_API_KEY"),
+	ZERNIO_ACCOUNT_OVERRIDES={
+		platform: value
+		for platform in ("instagram", "linkedin")
+		if (value := get_optional_env_var(f"ZERNIO_{platform.upper()}_ACCOUNT_ID"))
+	},
+	ZERNIO_LINKEDIN_ORGANIZATION_URN=get_optional_env_var("ZERNIO_LINKEDIN_ORGANIZATION_URN"),
 )
