@@ -47,6 +47,7 @@ class EnvConfig:
 	NEWS_FEED_URL: str
 	NEWS_TIMEZONE: str
 	PLATFORM_GUILD_ID: str | None
+	SOCIAL_HANDOFF_CHANNEL_ID: str | None
 	SUPABASE_SECRET_KEY: str
 	SUPABASE_URL: str
 
@@ -64,4 +65,7 @@ env_config = EnvConfig(
 	NEWS_ALERT_KEYWORDS=get_optional_env_var("NEWS_ALERT_KEYWORDS") or "critical,zero-day,zero day",
 	# The guild the staff platform manages. Optional so the bot still runs standalone.
 	PLATFORM_GUILD_ID=get_optional_env_var("PLATFORM_GUILD_ID"),
+	# Where scheduled Instagram and LinkedIn posts get handed to a person. Optional: without
+	# it the hand-off task stays asleep rather than guessing at a channel.
+	SOCIAL_HANDOFF_CHANNEL_ID=get_optional_env_var("SOCIAL_HANDOFF_CHANNEL_ID"),
 )
